@@ -38,39 +38,52 @@
             text-underline-offset: 4px;
             text-decoration-thickness: 2px;
             transition: all 0.2s;
+            position: relative; /* ポップアップを配置するための基準 */
+            display: inline-block; /* 吹き出しが単語に追従するように */
+            z-index: 10;
         }
         .key-term:hover {
             background-color: #fee2e2; /* red-100 */
         }
 
-        /* Modal styling */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        /* Popover Bubble Styling (New CSS) */
+        .popover-bubble {
+            position: absolute;
+            top: 100%; /* 単語の直下に配置 */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50; /* 高く設定して他の要素の上に表示 */
+            width: 280px;
+            max-width: 90vw;
+            background-color: #333;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-top: 8px;
+            line-height: 1.5;
+            text-align: left;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none; /* 非表示時にクリック不可にする */
         }
-        .modal-content {
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 90%;
-            width: 400px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            transform: scale(0.95);
-            transition: all 0.3s ease-out;
+
+        .popover-bubble.visible {
+            opacity: 1;
+            pointer-events: auto; /* 表示時にクリック可能にする */
+            transform: translateX(-50%) translateY(0);
         }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
+
+        /* 吹き出しの三角部分 */
+        .popover-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: 100%; /* 上部に配置 */
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-bottom-color: #333;
         }
 
         /* Responsive Columns (Desktop view) */
@@ -92,7 +105,7 @@
 
     <div class="max-w-4xl mx-auto mb-12">
         <h1 class="text-4xl font-extrabold text-center mb-2 text-gray-800">日本文化史特報</h1>
-        <p class="text-center text-sm text-gray-600 border-b pb-4">タップで詳細解説：重要単語に触れて知識を深めよう！</p>
+        <p class="text-center text-sm text-gray-600 border-b pb-4">重要単語をタップ！詳細な解説が吹き出しで表示されます</p>
     </div>
 
     <!-- 1. 明治時代（Meiji Period） -->
@@ -170,14 +183,7 @@
         </div>
     </section>
 
-    <!-- Modal for Detail Explanation -->
-    <div id="info-modal" class="modal-overlay" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 id="modal-title" class="text-2xl font-bold mb-3 border-b pb-2"></h3>
-            <p id="modal-body" class="text-gray-700"></p>
-            <button onclick="closeModal()" class="mt-6 w-full py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition duration-150 shadow-md">閉じる</button>
-        </div>
-    </div>
+    <!-- モーダルのHTMLは削除されました -->
 
     <script>
         // 定義する単語とその説明
@@ -220,71 +226,79 @@
             }
         };
 
-        // モーダル要素を取得
-        const modal = document.getElementById('info-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalBody = document.getElementById('modal-body');
+        let currentPopover = null; // 現在表示中の吹き出し要素を保持
+
+        // 吹き出しの表示/非表示を切り替える関数
+        function togglePopover(event, termKey) {
+            const clickedElement = event.currentTarget;
+            const data = terms[termKey];
+
+            // 1. 既に吹き出しが開いていれば閉じる（別要素がクリックされた場合も含む）
+            if (currentPopover) {
+                // 同じ要素が再度クリックされた場合は閉じて終了
+                if (currentPopover.parentElement === clickedElement) {
+                    closePopover();
+                    return;
+                }
+                // 別の要素がクリックされた場合は、まず既存のものを閉じる
+                closePopover();
+            }
+            
+            // 2. 新しい吹き出しを作成
+            const popover = document.createElement('div');
+            popover.className = 'popover-bubble visible';
+            popover.innerHTML = `<p class="font-bold mb-1">${data.title}</p><p>${data.description}</p>`;
+            
+            // 3. クリックされた要素の直後に挿入
+            clickedElement.appendChild(popover);
+            currentPopover = popover;
+
+            // 4. クリックイベントがバブリングするのを防ぐ
+            popover.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        // 吹き出しを閉じる関数
+        function closePopover() {
+            if (currentPopover) {
+                // アニメーションのためにvisibleクラスを外し、非表示にする
+                currentPopover.classList.remove('visible');
+                // 完了後にDOMから削除
+                currentPopover.addEventListener('transitionend', () => {
+                    if (currentPopover && currentPopover.parentElement) {
+                        currentPopover.parentElement.removeChild(currentPopover);
+                        currentPopover = null;
+                    }
+                }, { once: true });
+            }
+        }
 
         // 単語にイベントリスナーを設定する関数
         function setupKeyTerms() {
             // termsオブジェクトのキーを元に、文書中の太字の単語を探す
             Object.keys(terms).forEach(term => {
-                // 正規表現で太字の単語を探し、それを<span>タグで囲む
                 const regex = new RegExp(`\\*\\*(${term})\\*\\*`, 'g');
+                
                 // document.body以下のテキストを置換する処理
                 document.querySelectorAll('.newspaper-page').forEach(section => {
                     section.innerHTML = section.innerHTML.replace(regex, (match, p1) => {
                         // マッチした単語をkey-termクラスを持つ<span>で囲み、データ属性を設定
-                        return `<span class="key-term" data-term="${p1}">${p1}</span>`;
+                        return `<span class="key-term" data-term="${p1}" onclick="togglePopover(event, '${p1}')">${p1}</span>`;
                     });
                 });
             });
-
-            // すべてのkey-termにクリックイベントリスナーを追加
-            document.querySelectorAll('.key-term').forEach(span => {
-                span.addEventListener('click', function() {
-                    const termKey = this.getAttribute('data-term');
-                    showModal(termKey);
-                });
-            });
-        }
-
-        // モーダルを表示する関数
-        function showModal(termKey) {
-            const data = terms[termKey];
-            if (data) {
-                modalTitle.textContent = data.title;
-                modalBody.textContent = data.description;
-                modal.classList.add('active');
-            } else {
-                // エラー処理（本来は発生しないはず）
-                console.error('Term data not found for:', termKey);
-            }
-        }
-
-        // モーダルを閉じる関数
-        window.closeModal = function() {
-            modal.classList.remove('active');
-            // モーダルコンテンツが閉じるときにアニメーションを追加するため、少し遅延させる
-            setTimeout(() => {
-                // アニメーションが終わったら非表示に
-                if (!modal.classList.contains('active')) {
-                    modal.style.display = 'none';
+            
+            // 画面外（body）をクリックしたときに吹き出しを閉じるイベントを設定
+            document.body.addEventListener('click', (event) => {
+                // クリックされた要素がkey-termの内部にいない、かつ、現在吹き出しが表示されていれば閉じる
+                if (currentPopover && !event.target.closest('.key-term')) {
+                    closePopover();
                 }
-            }, 300);
+            });
         }
 
         // DOMが完全にロードされた後に初期設定を実行
         document.addEventListener('DOMContentLoaded', () => {
             setupKeyTerms();
-            // 初期状態ではモーダルを非表示にしておく
-            modal.style.display = 'none';
-            // activeクラスがついたらflex表示に切り替える
-            modal.addEventListener('transitionend', () => {
-                if (modal.classList.contains('active')) {
-                    modal.style.display = 'flex';
-                }
-            });
         });
     </script>
 </body>

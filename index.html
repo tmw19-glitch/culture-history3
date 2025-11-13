@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日本の文化史新聞</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Noto Serif JP for a newspaper feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Noto Serif JP', serif;
+            background-color: #f7f7f7;
+        }
+        /* Newspaper container styling */
+        .newspaper-page {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            background-color: #fff;
+            padding: 1.5rem 1rem;
+            margin-bottom: 2rem;
+        }
+        /* Newspaper headline style */
+        .headline {
+            border-bottom: 3px solid #000;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+        /* Tap-to-explain word style */
+        .key-term {
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-color: #ef4444; /* red-500 */
+            text-underline-offset: 4px;
+            text-decoration-thickness: 2px;
+            transition: all 0.2s;
+        }
+        .key-term:hover {
+            background-color: #fee2e2; /* red-100 */
+        }
+
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transform: scale(0.95);
+            transition: all 0.3s ease-out;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Responsive Columns (Desktop view) */
+        @media (min-width: 1024px) {
+            .newspaper-page {
+                max-width: 900px;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 2rem 3rem;
+            }
+            .content-cols {
+                column-count: 2;
+                column-gap: 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 lg:p-8">
+
+    <div class="max-w-4xl mx-auto mb-12">
+        <h1 class="text-4xl font-extrabold text-center mb-2 text-gray-800">日本文化史特報</h1>
+        <p class="text-center text-sm text-gray-600 border-b pb-4">タップで詳細解説：重要単語に触れて知識を深めよう！</p>
+    </div>
+
+    <!-- 1. 明治時代（Meiji Period） -->
+    <section id="meiji" class="newspaper-page rounded-xl">
+        <header class="text-center mb-4">
+            <div class="text-sm font-bold text-red-700">【第一報】明治三十年代</div>
+            <h2 class="headline text-4xl font-bold mt-1 mb-2">大改革の波！列強に追いつけ</h2>
+            <p class="text-sm font-light text-gray-700">東京日報 特別号外</p>
+        </header>
+
+        <div class="content-cols text-base leading-relaxed text-gray-800">
+            <p class="indent-4 mb-4">
+                明治維新以降、日本は急速な近代化の道を歩み、西洋文化を積極的に取り入れました。これを**文明開化**と呼びます。蒸気機関車やガス灯、洋風建築が都市部に現れ、人々の生活は一変。髪型を洋式にしたり、牛肉を食したりする新しい風習が広まりました。
+            </p>
+            <p class="indent-4 mb-4">
+                教育面でも、**学制**（1872年）が発布され、近代的な学校制度が整えられました。資料によれば、当時14歳以下の人口は420万人とされ、国民の多くはまだ学問に触れる機会が少なかった時代でしたが、教育の普及は国家の最重要課題とされました。
+            </p>
+            <p class="indent-4">
+                哲学や政治思想の分野でも、自由民権運動を背景に西洋の概念が流入し、知識階級を中心に、伝統的な価値観と新しい価値観との間で大きな衝突が生まれました。
+            </p>
+        </div>
+        <!-- 画像Placeholder -->
+        <div class="text-center mt-6 p-4 bg-gray-100 rounded-lg text-sm text-gray-600 italic">
+            
+        </div>
+    </section>
+
+    <!-- 2. 大正時代（Taisho Period） -->
+    <section id="taisho" class="newspaper-page rounded-xl">
+        <header class="text-center mb-4">
+            <div class="text-sm font-bold text-blue-700">【第二報】大正初～中期</div>
+            <h2 class="headline text-4xl font-bold mt-1 mb-2">デモクラシーと個性の開花</h2>
+            <p class="text-sm font-light text-gray-700">文化新報 大正拾弐年号</p>
+        </header>
+
+        <div class="content-cols text-base leading-relaxed text-gray-800">
+            <p class="indent-4 mb-4">
+                大正時代は「大正デモクラシー」と呼ばれる自由主義的な風潮が広がり、個人の尊重や解放が求められました。文学の世界では、自己の内面を探求する**ロマン主義**が全盛期を迎えました。
+            </p>
+            <p class="indent-4 mb-4">
+                また、社会の矛盾への関心から、貧困や格差を分析する**マルクス主義**などの社会主義思想が知識人、特に学生の間で支持を拡大しました。資料にも「人文学」「ロシアス」といった記述があり、海外の新しい思想が大きな影響を与えたことが窺えます。
+            </p>
+            <p class="indent-4">
+                この時期に特筆すべきは、文化が一部のエリート層から一般大衆へと広がる**大衆文化**の誕生です。都市生活者の増加とともに、娯楽への需要が高まり、映画や演劇、そして後の**ラジオ放送**がその担い手となりました。
+            </p>
+        </div>
+        <!-- 画像Placeholder -->
+        <div class="text-center mt-6 p-4 bg-gray-100 rounded-lg text-sm text-gray-600 italic">
+            
+        </div>
+    </section>
+
+    <!-- 3. 昭和時代（Showa Period: 戦時下〜戦後復興） -->
+    <section id="showa" class="newspaper-page rounded-xl">
+        <header class="text-center mb-4">
+            <div class="text-sm font-bold text-green-700">【第三報】昭和激動の時代</div>
+            <h2 class="headline text-4xl font-bold mt-1 mb-2">戦後復興と生活様式の変貌</h2>
+            <p class="text-sm font-light text-gray-700">平和新聞 昭和三十年代号</p>
+        </header>
+
+        <div class="content-cols text-base leading-relaxed text-gray-800">
+            <p class="indent-4 mb-4">
+                昭和初期の軍国主義の時代には、文化・言論は厳しい**戦時統制**下に置かれました。文学者や芸術家は戦争協力の道を選ばされるか、表現の自由を奪われました。
+            </p>
+            <p class="indent-4 mb-4">
+                しかし終戦後、文化は大きな転換期を迎えます。GHQによる民主化政策と同時に、失われた文化を守るための活動が重要視され、1950年には**文化財保護法**が制定されました。
+            </p>
+            <p class="indent-4 mb-4">
+                そして、1950年代半ばからは**高度経済成長**期に突入します。テレビ、冷蔵庫、洗濯機といった「三種の神器」が普及し、人々の生活水準は飛躍的に向上しました。都市部では**ビルディング**が林立し、「TOKYO 1064」といった標語が生まれるなど、急速な社会変化を遂げました。資料にあるように**カレーライス**の普及など、食生活の洋風化も進みました。
+            </p>
+        </div>
+        <!-- 画像Placeholder -->
+        <div class="text-center mt-6 p-4 bg-gray-100 rounded-lg text-sm text-gray-600 italic">
+            
+        </div>
+    </section>
+
+    <!-- Modal for Detail Explanation -->
+    <div id="info-modal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 id="modal-title" class="text-2xl font-bold mb-3 border-b pb-2"></h3>
+            <p id="modal-body" class="text-gray-700"></p>
+            <button onclick="closeModal()" class="mt-6 w-full py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition duration-150 shadow-md">閉じる</button>
+        </div>
+    </div>
+
+    <script>
+        // 定義する単語とその説明
+        const terms = {
+            "文明開化": {
+                title: "文明開化（ぶんめいかいか）",
+                description: "明治時代初期に、西洋の文化、制度、技術を積極的に取り入れ、生活様式や社会構造を近代化しようとした現象。福沢諭吉の『学問のすすめ』などが代表的。"
+            },
+            "学制": {
+                title: "学制（がくせい）",
+                description: "1872年（明治5年）に発布された、近代的な教育制度に関する法令。身分に関係なくすべての国民を対象とした小学校教育の普及を目指した。"
+            },
+            "ロマン主義": {
+                title: "ロマン主義（ロマンしゅぎ）",
+                description: "大正時代に主流となった文学・芸術の潮流。個人の感情や自我の尊重、理想や自由の追求をテーマとする。島崎藤村や北原白秋などが有名。"
+            },
+            "マルクス主義": {
+                title: "マルクス主義（マルクスしゅぎ）",
+                description: "カール・マルクスが提唱した思想体系。資本主義社会の矛盾や階級闘争を分析し、社会主義・共産主義社会の実現を目指す。大正・昭和初期の知識人に大きな影響を与えた。"
+            },
+            "大衆文化": {
+                title: "大衆文化（たいしゅうぶんか）",
+                description: "新聞、雑誌、映画、ラジオなどの新しいメディアの発展により、一部のエリート層だけでなく、一般大衆に広く共有されるようになった文化。"
+            },
+            "ラジオ放送": {
+                title: "ラジオ放送（ラジオほうそう）",
+                description: "1925年（大正14年）に東京で開始された本放送。家庭に情報や娯楽を届ける新しいメディアとして急速に普及し、大衆文化の発展に不可欠な役割を果たした。"
+            },
+            "戦時統制": {
+                title: "戦時統制（せんじとうせい）",
+                description: "日中戦争・太平洋戦争下で、国家が物資や産業、言論、文化活動などを管理・制限した体制。すべての国民生活が戦争遂行のために動員された。"
+            },
+            "文化財保護法": {
+                title: "文化財保護法（ぶんかざいほごほう）",
+                description: "1950年（昭和25年）に制定された法律。火災で焼失した法隆寺金堂などの教訓から、日本の貴重な文化財（有形・無形）の保存と活用を目的にしている。"
+            },
+            "高度経済成長": {
+                title: "高度経済成長（こうどけいざいせいちょう）",
+                description: "1950年代半ばから1970年代初頭にかけての、日本のGDPが年平均10%前後の高い成長率を記録した期間。生活水準が向上し、社会構造が大きく変化した。"
+            }
+        };
+
+        // モーダル要素を取得
+        const modal = document.getElementById('info-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+
+        // 単語にイベントリスナーを設定する関数
+        function setupKeyTerms() {
+            // termsオブジェクトのキーを元に、文書中の太字の単語を探す
+            Object.keys(terms).forEach(term => {
+                // 正規表現で太字の単語を探し、それを<span>タグで囲む
+                const regex = new RegExp(`\\*\\*(${term})\\*\\*`, 'g');
+                // document.body以下のテキストを置換する処理
+                document.querySelectorAll('.newspaper-page').forEach(section => {
+                    section.innerHTML = section.innerHTML.replace(regex, (match, p1) => {
+                        // マッチした単語をkey-termクラスを持つ<span>で囲み、データ属性を設定
+                        return `<span class="key-term" data-term="${p1}">${p1}</span>`;
+                    });
+                });
+            });
+
+            // すべてのkey-termにクリックイベントリスナーを追加
+            document.querySelectorAll('.key-term').forEach(span => {
+                span.addEventListener('click', function() {
+                    const termKey = this.getAttribute('data-term');
+                    showModal(termKey);
+                });
+            });
+        }
+
+        // モーダルを表示する関数
+        function showModal(termKey) {
+            const data = terms[termKey];
+            if (data) {
+                modalTitle.textContent = data.title;
+                modalBody.textContent = data.description;
+                modal.classList.add('active');
+            } else {
+                // エラー処理（本来は発生しないはず）
+                console.error('Term data not found for:', termKey);
+            }
+        }
+
+        // モーダルを閉じる関数
+        window.closeModal = function() {
+            modal.classList.remove('active');
+            // モーダルコンテンツが閉じるときにアニメーションを追加するため、少し遅延させる
+            setTimeout(() => {
+                // アニメーションが終わったら非表示に
+                if (!modal.classList.contains('active')) {
+                    modal.style.display = 'none';
+                }
+            }, 300);
+        }
+
+        // DOMが完全にロードされた後に初期設定を実行
+        document.addEventListener('DOMContentLoaded', () => {
+            setupKeyTerms();
+            // 初期状態ではモーダルを非表示にしておく
+            modal.style.display = 'none';
+            // activeクラスがついたらflex表示に切り替える
+            modal.addEventListener('transitionend', () => {
+                if (modal.classList.contains('active')) {
+                    modal.style.display = 'flex';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

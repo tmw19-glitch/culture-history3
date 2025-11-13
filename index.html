@@ -38,21 +38,18 @@
             text-underline-offset: 4px;
             text-decoration-thickness: 2px;
             transition: all 0.2s;
-            position: relative; /* ポップアップを配置するための基準 */
-            display: inline-block; /* 吹き出しが単語に追従するように */
+            /* body直下に配置するため、relative/inline-blockは不要だが、デザインのため残す */
+            display: inline; 
             z-index: 10;
         }
         .key-term:hover {
             background-color: #fee2e2; /* red-100 */
         }
 
-        /* Popover Bubble Styling (New CSS) */
+        /* Popover Bubble Styling */
         .popover-bubble {
-            position: absolute;
-            top: 100%; /* 単語の直下に配置 */
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 50; /* 高く設定して他の要素の上に表示 */
+            position: absolute; /* body基準で絶対配置 */
+            z-index: 50;
             width: 280px;
             max-width: 90vw;
             background-color: #333;
@@ -60,44 +57,42 @@
             padding: 12px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            margin-top: 8px;
             line-height: 1.5;
             text-align: left;
             font-size: 0.9rem;
             opacity: 0;
+            /* transformを初期状態から設定 */
+            transform: translate(-50%, 10px); 
             transition: opacity 0.2s, transform 0.2s;
-            pointer-events: none; /* 非表示時にクリック不可にする */
+            pointer-events: none;
         }
 
         .popover-bubble.visible {
             opacity: 1;
-            pointer-events: auto; /* 表示時にクリック可能にする */
-            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+            /* 表示時に位置を調整 (下表示なら下に10px移動した分を戻す) */
+            transform: translate(-50%, 0); 
         }
 
-        /* 吹き出しの三角部分 */
-        .popover-bubble::before {
+        /* 上向き三角（吹き出しが単語の下に表示される場合）*/
+        .popover-bubble.bottom::before {
             content: '';
             position: absolute;
-            bottom: 100%; /* 上部に配置 */
+            bottom: 100%; /* 上側に配置 */
             left: 50%;
             transform: translateX(-50%);
             border: 8px solid transparent;
             border-bottom-color: #333;
         }
-
-        /* Responsive Columns (Desktop view) */
-        @media (min-width: 1024px) {
-            .newspaper-page {
-                max-width: 900px;
-                margin-left: auto;
-                margin-right: auto;
-                padding: 2rem 3rem;
-            }
-            .content-cols {
-                column-count: 2;
-                column-gap: 2rem;
-            }
+        /* 下向き三角（吹き出しが単語の上に表示される場合）*/
+        .popover-bubble.top::before {
+            content: '';
+            position: absolute;
+            top: 100%; /* 下側に配置 */
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #333;
         }
     </style>
 </head>
@@ -118,10 +113,10 @@
 
         <div class="content-cols text-base leading-relaxed text-gray-800">
             <p class="indent-4 mb-4">
-                明治維新以降、日本は急速な近代化の道を歩み、西洋文化を積極的に取り入れました。これを**文明開化**と呼びます。蒸気機関車やガス灯、洋風建築が都市部に現れ、人々の生活は一変。髪型を洋式にしたり、牛肉を食したりする新しい風習が広まりました。
+                明治維新以降、日本は急速な近代化の道を歩み、西洋文化を積極的に取り入れました。これを<span class="key-term" data-term="文明開化" onclick="togglePopover(event, '文明開化')">文明開化</span>と呼びます。蒸気機関車やガス灯、洋風建築が都市部に現れ、人々の生活は一変。髪型を洋式にしたり、牛肉を食したりする新しい風習が広まりました。
             </p>
             <p class="indent-4 mb-4">
-                教育面でも、**学制**（1872年）が発布され、近代的な学校制度が整えられました。資料によれば、当時14歳以下の人口は420万人とされ、国民の多くはまだ学問に触れる機会が少なかった時代でしたが、教育の普及は国家の最重要課題とされました。
+                教育面でも、<span class="key-term" data-term="学制" onclick="togglePopover(event, '学制')">学制</span>（1872年）が発布され、近代的な学校制度が整えられました。資料によれば、当時14歳以下の人口は420万人とされ、国民の多くはまだ学問に触れる機会が少なかった時代でしたが、教育の普及は国家の最重要課題とされました。
             </p>
             <p class="indent-4">
                 哲学や政治思想の分野でも、自由民権運動を背景に西洋の概念が流入し、知識階級を中心に、伝統的な価値観と新しい価値観との間で大きな衝突が生まれました。
@@ -143,13 +138,13 @@
 
         <div class="content-cols text-base leading-relaxed text-gray-800">
             <p class="indent-4 mb-4">
-                大正時代は「大正デモクラシー」と呼ばれる自由主義的な風潮が広がり、個人の尊重や解放が求められました。文学の世界では、自己の内面を探求する**ロマン主義**が全盛期を迎えました。
+                大正時代は「大正デモクラシー」と呼ばれる自由主義的な風潮が広がり、個人の尊重や解放が求められました。文学の世界では、自己の内面を探求する<span class="key-term" data-term="ロマン主義" onclick="togglePopover(event, 'ロマン主義')">ロマン主義</span>が全盛期を迎えました。
             </p>
             <p class="indent-4 mb-4">
-                また、社会の矛盾への関心から、貧困や格差を分析する**マルクス主義**などの社会主義思想が知識人、特に学生の間で支持を拡大しました。資料にも「人文学」「ロシアス」といった記述があり、海外の新しい思想が大きな影響を与えたことが窺えます。
+                また、社会の矛盾への関心から、貧困や格差を分析する<span class="key-term" data-term="マルクス主義" onclick="togglePopover(event, 'マルクス主義')">マルクス主義</span>などの社会主義思想が知識人、特に学生の間で支持を拡大しました。資料にも「人文学」「ロシアス」といった記述があり、海外の新しい思想が大きな影響を与えたことが窺えます。
             </p>
             <p class="indent-4">
-                この時期に特筆すべきは、文化が一部のエリート層から一般大衆へと広がる**大衆文化**の誕生です。都市生活者の増加とともに、娯楽への需要が高まり、映画や演劇、そして後の**ラジオ放送**がその担い手となりました。
+                この時期に特筆すべきは、文化が一部のエリート層から一般大衆へと広がる<span class="key-term" data-term="大衆文化" onclick="togglePopover(event, '大衆文化')">大衆文化</span>の誕生です。都市生活者の増加とともに、娯楽への需要が高まり、映画や演劇、そして後の<span class="key-term" data-term="ラジオ放送" onclick="togglePopover(event, 'ラジオ放送')">ラジオ放送</span>がその担い手となりました。
             </p>
         </div>
         <!-- 画像Placeholder -->
@@ -168,13 +163,13 @@
 
         <div class="content-cols text-base leading-relaxed text-gray-800">
             <p class="indent-4 mb-4">
-                昭和初期の軍国主義の時代には、文化・言論は厳しい**戦時統制**下に置かれました。文学者や芸術家は戦争協力の道を選ばされるか、表現の自由を奪われました。
+                昭和初期の軍国主義の時代には、文化・言論は厳しい<span class="key-term" data-term="戦時統制" onclick="togglePopover(event, '戦時統制')">戦時統制</span>下に置かれました。文学者や芸術家は戦争協力の道を選ばされるか、表現の自由を奪われました。
             </p>
             <p class="indent-4 mb-4">
-                しかし終戦後、文化は大きな転換期を迎えます。GHQによる民主化政策と同時に、失われた文化を守るための活動が重要視され、1950年には**文化財保護法**が制定されました。
+                しかし終戦後、文化は大きな転換期を迎えます。GHQによる民主化政策と同時に、失われた文化を守るための活動が重要視され、1950年には<span class="key-term" data-term="文化財保護法" onclick="togglePopover(event, '文化財保護法')">文化財保護法</span>が制定されました。
             </p>
             <p class="indent-4 mb-4">
-                そして、1950年代半ばからは**高度経済成長**期に突入します。テレビ、冷蔵庫、洗濯機といった「三種の神器」が普及し、人々の生活水準は飛躍的に向上しました。都市部では**ビルディング**が林立し、「TOKYO 1064」といった標語が生まれるなど、急速な社会変化を遂げました。資料にあるように**カレーライス**の普及など、食生活の洋風化も進みました。
+                そして、1950年代半ばからは<span class="key-term" data-term="高度経済成長" onclick="togglePopover(event, '高度経済成長')">高度経済成長</span>期に突入します。テレビ、冷蔵庫、洗濯機といった「三種の神器」が普及し、人々の生活水準は飛躍的に向上しました。都市部では<span class="key-term" data-term="ビルディング" onclick="togglePopover(event, 'ビルディング')">ビルディング</span>が林立し、「TOKYO 1064」といった標語が生まれるなど、急速な社会変化を遂げました。資料にあるように<span class="key-term" data-term="カレーライス" onclick="togglePopover(event, 'カレーライス')">カレーライス</span>の普及など、食生活の洋風化も進みました。
             </p>
         </div>
         <!-- 画像Placeholder -->
@@ -182,8 +177,6 @@
             
         </div>
     </section>
-
-    <!-- モーダルのHTMLは削除されました -->
 
     <script>
         // 定義する単語とその説明
@@ -223,20 +216,50 @@
             "高度経済成長": {
                 title: "高度経済成長（こうどけいざいせいちょう）",
                 description: "1950年代半ばから1970年代初頭にかけての、日本のGDPが年平均10%前後の高い成長率を記録した期間。生活水準が向上し、社会構造が大きく変化した。"
+            },
+            "ビルディング": {
+                title: "ビルディング（Building）",
+                description: "高層建築物。高度経済成長期には、都市再開発やオリンピックなどを背景に、次々と高層ビルが建設され、都市景観の象徴となった。"
+            },
+            "カレーライス": {
+                title: "カレーライス",
+                description: "明治時代に西洋から伝わり、大正・昭和にかけて国民食として普及した。特に戦後の給食を通じて、一般家庭の食卓に定着した。"
             }
         };
 
         let currentPopover = null; // 現在表示中の吹き出し要素を保持
 
+        // 吹き出しを閉じる関数
+        function closePopover() {
+            if (currentPopover) {
+                // アニメーションのためにvisibleクラスを外し、非表示にする
+                currentPopover.classList.remove('visible');
+                
+                // 完了後にDOMから削除 (この処理を確実にする)
+                const popoverToRemove = currentPopover;
+                currentPopover = null;
+
+                popoverToRemove.addEventListener('transitionend', function handler() {
+                    if (popoverToRemove.parentElement) {
+                        popoverToRemove.parentElement.removeChild(popoverToRemove);
+                    }
+                    popoverToRemove.removeEventListener('transitionend', handler);
+                }, { once: true });
+            }
+        }
+        
         // 吹き出しの表示/非表示を切り替える関数
         function togglePopover(event, termKey) {
+            // イベントのバブリングを停止し、bodyへのクリックイベントが発火しないようにする
+            event.stopPropagation();
+            
             const clickedElement = event.currentTarget;
             const data = terms[termKey];
 
             // 1. 既に吹き出しが開いていれば閉じる（別要素がクリックされた場合も含む）
             if (currentPopover) {
                 // 同じ要素が再度クリックされた場合は閉じて終了
-                if (currentPopover.parentElement === clickedElement) {
+                if (currentPopover.dataset.termKey === termKey) {
                     closePopover();
                     return;
                 }
@@ -244,61 +267,99 @@
                 closePopover();
             }
             
-            // 2. 新しい吹き出しを作成
+            // 2. 新しい吹き出しを作成し、body直下に配置
             const popover = document.createElement('div');
-            popover.className = 'popover-bubble visible';
-            popover.innerHTML = `<p class="font-bold mb-1">${data.title}</p><p>${data.description}</p>`;
-            
-            // 3. クリックされた要素の直後に挿入
-            clickedElement.appendChild(popover);
+            popover.className = 'popover-bubble';
+            popover.dataset.termKey = termKey; // どの単語の吹き出しかを識別するためにキーを保存
+
+            const title = data.title || termKey;
+            popover.innerHTML = `<p class="font-bold mb-1">${title}</p><p>${data.description}</p>`;
+            document.body.appendChild(popover);
             currentPopover = popover;
 
-            // 4. クリックイベントがバブリングするのを防ぐ
+            // 3. ポップアップの位置調整
+            const rect = clickedElement.getBoundingClientRect();
+            const popoverWidth = 280; // CSSで定義された幅
+            const popoverHeight = 150; // 仮の高さ (中身によって変わるため、多めに設定)
+            const margin = 10;
+            const arrowSize = 8;
+            
+            // ポップアップの中心X座標
+            const centerX = rect.left + rect.width / 2;
+            
+            // ----------------------------------------------------
+            // 縦位置 (デフォルト: 下)
+            let isDisplayingOnTop = false;
+            // 単語の上端から上方向に向かってポップアップを表示するのに十分なスペースがあるか確認
+            if (rect.top - popoverHeight - margin < 0) {
+                // スペースがない場合は下に表示
+                popover.style.top = `${rect.bottom + arrowSize}px`;
+                popover.classList.add('bottom');
+            } else {
+                // スペースがある場合は上に表示
+                popover.style.top = `${rect.top - popoverHeight - arrowSize}px`;
+                popover.classList.add('top');
+                isDisplayingOnTop = true;
+            }
+            // ----------------------------------------------------
+            
+            // ----------------------------------------------------
+            // 横位置 (デフォルト: 中央寄せ)
+            let finalLeft = centerX - popoverWidth / 2;
+            
+            // 左端からはみ出す場合
+            if (finalLeft < margin) {
+                finalLeft = margin;
+            }
+            
+            // 右端からはみ出す場合
+            const popoverRightEdge = finalLeft + popoverWidth;
+            if (popoverRightEdge > window.innerWidth - margin) {
+                finalLeft = window.innerWidth - popoverWidth - margin;
+            }
+            
+            popover.style.left = `${finalLeft}px`;
+
+            // 三角の位置調整 (ポップアップのleftからの相対位置で計算)
+            const arrowLeftOffset = centerX - finalLeft;
+            const arrowElement = popover.querySelector('.top, .bottom');
+            if (arrowElement) {
+                arrowElement.style.left = `${arrowLeftOffset}px`;
+                arrowElement.style.transform = 'translateX(-50%)'; // 中心に固定
+            }
+            // ----------------------------------------------------
+
+            // 4. 表示を確定し、アニメーションを開始
+            // ポップアップの最終的な高さが確定したら、上に表示している場合はtopを再計算する
+            if (isDisplayingOnTop) {
+                // DOMに追加され、幅が確定した後、高さを再取得
+                const actualHeight = popover.offsetHeight;
+                popover.style.top = `${rect.top - actualHeight - arrowSize}px`;
+            }
+
+            // 描画サイクルを待ってからvisibleクラスを付与
+            requestAnimationFrame(() => {
+                popover.classList.add('visible');
+            });
+
+            // 5. クリックイベントが吹き出し内から発火しても閉じる処理を止めない
             popover.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        // 吹き出しを閉じる関数
-        function closePopover() {
-            if (currentPopover) {
-                // アニメーションのためにvisibleクラスを外し、非表示にする
-                currentPopover.classList.remove('visible');
-                // 完了後にDOMから削除
-                currentPopover.addEventListener('transitionend', () => {
-                    if (currentPopover && currentPopover.parentElement) {
-                        currentPopover.parentElement.removeChild(currentPopover);
-                        currentPopover = null;
-                    }
-                }, { once: true });
-            }
-        }
 
-        // 単語にイベントリスナーを設定する関数
-        function setupKeyTerms() {
-            // termsオブジェクトのキーを元に、文書中の太字の単語を探す
-            Object.keys(terms).forEach(term => {
-                const regex = new RegExp(`\\*\\*(${term})\\*\\*`, 'g');
-                
-                // document.body以下のテキストを置換する処理
-                document.querySelectorAll('.newspaper-page').forEach(section => {
-                    section.innerHTML = section.innerHTML.replace(regex, (match, p1) => {
-                        // マッチした単語をkey-termクラスを持つ<span>で囲み、データ属性を設定
-                        return `<span class="key-term" data-term="${p1}" onclick="togglePopover(event, '${p1}')">${p1}</span>`;
-                    });
-                });
-            });
+        // DOMが完全にロードされた後に、画面外クリックのイベントリスナーを設定
+        document.addEventListener('DOMContentLoaded', () => {
             
             // 画面外（body）をクリックしたときに吹き出しを閉じるイベントを設定
             document.body.addEventListener('click', (event) => {
-                // クリックされた要素がkey-termの内部にいない、かつ、現在吹き出しが表示されていれば閉じる
+                // クリックされた要素がkey-termクラスを持たない、かつ、現在吹き出しが表示されていれば閉じる
                 if (currentPopover && !event.target.closest('.key-term')) {
                     closePopover();
                 }
             });
-        }
 
-        // DOMが完全にロードされた後に初期設定を実行
-        document.addEventListener('DOMContentLoaded', () => {
-            setupKeyTerms();
+             // ウィンドウサイズが変更されたら、開いている吹き出しを閉じる
+            window.addEventListener('resize', closePopover);
         });
     </script>
 </body>
